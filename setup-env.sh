@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Environment Setup Script for The Noisy Lab
+echo "🚀 Setting up environment variables for The Noisy Lab..."
+
+# Generate NextAuth Secret
+NEXTAUTH_SECRET=$(openssl rand -base64 32 2>/dev/null || echo "your-secret-key-here")
+
+echo "📝 Add these variables to your .env.local file:"
+echo ""
+echo "# ==========================================="
+echo "# DATABASE CONFIGURATION"
+echo "# ==========================================="
+echo "MONGODB_URI=mongodb://localhost:27017/thenoisylab"
+echo ""
+echo "# ==========================================="
+echo "# EMAIL CONFIGURATION (SMTP)"
+echo "# ==========================================="
+echo "SMTP_HOST=smtp.gmail.com"
+echo "SMTP_PORT=587"
+echo "SMTP_USER=thenoisylabbb@gmail.com"
+echo "SMTP_PASS=your_gmail_app_password_here"
+echo "EMAIL_PASSWORD=your_gmail_app_password_here"
+echo ""
+echo "# ==========================================="
+echo "# NEXT.JS CONFIGURATION"
+echo "# ==========================================="
+echo "NEXTAUTH_URL=http://localhost:3000"
+echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET"
+echo ""
+echo "# ==========================================="
+echo "# RATE LIMITING CONFIGURATION"
+echo "# ==========================================="
+echo "RATE_LIMIT_WINDOW_MS=900000"
+echo "RATE_LIMIT_MAX_REQUESTS=10"
+echo ""
+echo "✅ Environment variables ready!"
+echo ""
+echo "📋 Next steps:"
+echo "1. Copy the above variables to your .env.local file"
+echo "2. Replace 'your_gmail_app_password_here' with your actual Gmail App Password"
+echo "3. Start MongoDB (if running locally)"
+echo "4. Run 'npm run dev' to start the development server"
