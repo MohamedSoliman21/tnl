@@ -173,7 +173,7 @@ export default function Apply() {
                 <span className="font-semibold">Location:</span> {career.location}
               </p>
               <p className="text-gray-600">
-                <span className="font-semibold">Type:</span> {career.type.replace('-', ' ')}
+                <span className="font-semibold">Type:</span> {career.type?.replace('-', ' ')}
               </p>
             </motion.div>
           )}

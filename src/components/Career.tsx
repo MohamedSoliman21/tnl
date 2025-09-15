@@ -187,7 +187,7 @@ export default function Career() {
                     
                     <div className="flex flex-wrap gap-2 mb-3">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(career.type)}`}>
-                        {career.type.replace('-', ' ')}
+                        {career.type?.replace('-', ' ')}
                       </span>
                       <span className="bg-white/20 text-white px-2 py-1 rounded-full text-xs font-medium">
                         {career.location}

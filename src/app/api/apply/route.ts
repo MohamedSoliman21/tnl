@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     // Validate phone number format (basic validation)
     const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    if (!phoneRegex.test(body.phoneNumber.replace(/[\s\-\(\)]/g, ''))) {
+    if (!phoneRegex.test(body.phoneNumber?.replace(/[\s\-\(\)]/g, ''))) {
       return NextResponse.json(
         { 
           success: false, 
