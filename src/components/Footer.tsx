@@ -29,21 +29,21 @@ export default function Footer() {
       const result = await response.json();
 
       if (result.success) {
-        setSubmitStatus({ 
-          type: 'success', 
-          message: result.message 
+        setSubmitStatus({
+          type: 'success',
+          message: result.message
         });
         setEmail("");
       } else {
-        setSubmitStatus({ 
-          type: 'error', 
-          message: result.error || 'Something went wrong. Please try again.' 
+        setSubmitStatus({
+          type: 'error',
+          message: result.error || 'Something went wrong. Please try again.'
         });
       }
     } catch (error) {
-      setSubmitStatus({ 
-        type: 'error', 
-        message: 'Network error. Please check your connection and try again.' 
+      setSubmitStatus({
+        type: 'error',
+        message: 'Network error. Please check your connection and try again.'
       });
     } finally {
       setIsSubmitting(false);
@@ -119,11 +119,10 @@ export default function Footer() {
             {/* Status Message */}
             {submitStatus.type && (
               <motion.div
-                className={`p-3 rounded-lg text-sm ${
-                  submitStatus.type === 'success' 
-                    ? 'bg-green-100 text-green-800 border border-green-200' 
+                className={`p-3 rounded-lg text-sm ${submitStatus.type === 'success'
+                    ? 'bg-green-100 text-green-800 border border-green-200'
                     : 'bg-red-100 text-red-800 border border-red-200'
-                }`}
+                  }`}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -151,11 +150,10 @@ export default function Footer() {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-3 rounded-full font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
-                  isSubmitting 
-                    ? 'bg-gray-400 cursor-not-allowed' 
+                className={`w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-3 rounded-full font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-[#F58906] hover:bg-orange-500'
-                } text-white`}
+                  } text-white`}
                 whileHover={!isSubmitting ? { scale: 1.05 } : {}}
                 whileTap={!isSubmitting ? { scale: 0.95 } : {}}
               >
@@ -199,7 +197,7 @@ export default function Footer() {
                 </svg>
               </motion.a>
               <motion.a
-                href="https://www.linkedin.com/company/the-noisy-lab/"
+                href="https://www.tiktok.com/@thenoisylabb?_t=ZS-8zknOAN5QbY&_r=1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer transition-colors hover:bg-white/10"
@@ -211,7 +209,7 @@ export default function Footer() {
                 </svg>
               </motion.a>
               <motion.a
-                href="https://www.tiktok.com/@thenoisylabb?_t=ZS-8zknOAN5QbY&_r=1"
+                href="https://www.linkedin.com/company/the-noisy-lab/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer transition-colors hover:bg-white/10"
