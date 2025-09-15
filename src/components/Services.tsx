@@ -1,9 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 export default function Services() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const services = [
     {
       name: "Strategy & Planning",
@@ -173,19 +177,36 @@ export default function Services() {
   ];
 
   return (
-    <section id="services" className="relative bg-white py-12 sm:py-20 px-4 sm:px-6 overflow-hidden">
+    <section ref={ref} id="services" className="relative bg-white py-12 sm:py-20 px-4 sm:px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto">
 
-        <div className="text mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-purple-900 mb-4 sm:mb-6">What We Do</h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl px-4">
+        <motion.div 
+          className="text mb-12 sm:mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <motion.h2 
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-purple-900 mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            What We Do
+          </motion.h2>
+          <motion.p 
+            className="text-lg sm:text-xl text-gray-600 max-w-2xl px-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
             At <span className="font-bold relative">The Noisy Lab         <div className="absolute -bottom-1 left-0 w-full">
               <Image src="/homepage/text-decoration-line.svg" alt="" width={309} height={6} className="w-full h-1" />
             </div></span>, we don't whisper. We create marketing that's impossible to ignore.
             Here's how we help brands make noise that matters:
-          </p>
+          </motion.p>
 
-        </div>
+        </motion.div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12 px-4 sm:px-8">
@@ -194,8 +215,8 @@ export default function Services() {
               key={index} 
               className="relative group"
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay: 0.8 + (index * 0.1) }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -214,16 +235,16 @@ export default function Services() {
                   <motion.h3 
                     className="font-semibold text-gray-800 text-xs xs:text-sm sm:text-base text-center px-1 xs:px-2 py-1 mt-2 xs:mt-3 sm:mt-4 leading-tight"
                     initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: (index * 0.1) + 0.3 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: 1.0 + (index * 0.1) }}
                   >
                     {service.name}
                   </motion.h3>
                   <motion.div 
                     className="text-2xl xs:text-3xl sm:text-4xl mb-2 xs:mb-3 sm:mb-4 drop-shadow-lg"
                     initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: (index * 0.1) + 0.4 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+                    transition={{ duration: 0.5, delay: 1.2 + (index * 0.1) }}
                     whileHover={{ scale: 1.2 }}
                   >
                     {service.icon}

@@ -1,34 +1,32 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IJobApplication extends Document {
-  name: string;
+  fullName: string;
   email: string;
+  age: number;
   phoneNumber: string;
-  businessName: string;
-  brandDescription: string;
-  position: string;
-  careerId?: string; // Reference to the career being applied for
-  instagram?: string;
-  facebook?: string;
-  tiktok?: string;
-  extraNotes?: string;
+  portfolio?: string;
+  careerId: string; // Reference to the career being applied for
+  cvFileName: string;
+  cvFileSize: number;
+  cvFileType: string;
+  cvFileBase64: string; // Store CV file as base64
   submittedAt: Date;
   ipAddress?: string;
   userAgent?: string;
 }
 
 const JobApplicationSchema = new Schema<IJobApplication>({
-  name: { type: String, required: true },
+  fullName: { type: String, required: true },
   email: { type: String, required: true },
+  age: { type: Number, required: true },
   phoneNumber: { type: String, required: true },
-  businessName: { type: String, required: true },
-  brandDescription: { type: String, required: true },
-  position: { type: String, required: true },
-  careerId: { type: String }, // Reference to the career being applied for
-  instagram: { type: String },
-  facebook: { type: String },
-  tiktok: { type: String },
-  extraNotes: { type: String },
+  portfolio: { type: String },
+  careerId: { type: String, required: true }, // Reference to the career being applied for
+  cvFileName: { type: String, required: true },
+  cvFileSize: { type: Number, required: true },
+  cvFileType: { type: String, required: true },
+  cvFileBase64: { type: String, required: true }, // Store CV file as base64
   submittedAt: { type: Date, default: Date.now },
   ipAddress: { type: String },
   userAgent: { type: String }

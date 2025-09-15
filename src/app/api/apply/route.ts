@@ -18,11 +18,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const formData = await request.formData();
+    
+    // Extract form data
+    const body = {
+      fullName: formData.get('fullName') as string,
+      email: formData.get('email') as string,
+      age: formData.get('age') as string,
+      phoneNumber: formData.get('phoneNumber') as string,
+      portfolio: formData.get('portfolio') as string,
+      careerId: formData.get('careerId') as string,
+      cvFile: formData.get('cvFile') as File | null
+    };
     
     // Validate required fields
-    const requiredFields = ['name', 'email', 'phoneNumber', 'businessName', 'brandDescription'];
-    const missingFields = requiredFields.filter(field => !body[field]);
+    const requiredFields = ['fullName', 'email', 'age', 'phoneNumber', 'careerId'];
+    const missingFields = requiredFields.filter(field => !body[field as keyof typeof body]);
     
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -58,6 +69,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate CV file
+    if (!body.cvFile || body.cvFile.size === 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'CV file is required' 
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate CV file size (2MB limit)
+    if (body.cvFile.size > 2 * 1024 * 1024) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'CV file size must be less than 2MB' 
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate CV file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(body.cvFile.type)) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'CV file must be a PDF or Word document' 
+        },
+        { status: 400 }
+      );
+    }
+
     // Connect to database
     await connectDB();
 
@@ -65,9 +110,22 @@ export async function POST(request: NextRequest) {
     const ipAddress = getClientIP(request);
     const userAgent = getUserAgent(request);
 
+    // Convert CV file to base64
+    const cvFileBuffer = await body.cvFile.arrayBuffer();
+    const cvFileBase64 = Buffer.from(cvFileBuffer).toString('base64');
+
     // Create application data
     const applicationData = {
-      ...body,
+      fullName: body.fullName,
+      email: body.email,
+      age: parseInt(body.age),
+      phoneNumber: body.phoneNumber,
+      portfolio: body.portfolio || '',
+      careerId: body.careerId,
+      cvFileName: body.cvFile.name,
+      cvFileSize: body.cvFile.size,
+      cvFileType: body.cvFile.type,
+      cvFileBase64: cvFileBase64,
       ipAddress,
       userAgent,
       submittedAt: new Date()

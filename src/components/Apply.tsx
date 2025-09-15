@@ -16,16 +16,12 @@ export default function Apply() {
   const [career, setCareer] = useState<Career | null>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
+    age: "",
     phoneNumber: "",
-    businessName: "",
-    brandDescription: "",
-    instagram: "",
-    facebook: "",
-    tiktok: "",
-    extraNotes: "",
-    position: "", // Add position field
+    portfolio: "",
+    cvFile: null as File | null,
     careerId: "" // Add careerId field
   });
 
@@ -53,10 +49,9 @@ export default function Apply() {
       if (response.ok) {
         const careerData = await response.json();
         setCareer(careerData);
-        // Pre-fill position field
+        // Set careerId for the application
         setFormData(prev => ({
           ...prev,
-          position: careerData.title,
           careerId: careerData._id
         }));
       } else {
@@ -77,18 +72,45 @@ export default function Apply() {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (2MB limit)
+      if (file.size > 2 * 1024 * 1024) {
+        setSubmitStatus({
+          type: 'error',
+          message: 'File size must be less than 2MB'
+        });
+        return;
+      }
+      setFormData(prev => ({
+        ...prev,
+        cvFile: file
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('fullName', formData.fullName);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('age', formData.age);
+      formDataToSend.append('phoneNumber', formData.phoneNumber);
+      formDataToSend.append('portfolio', formData.portfolio);
+      formDataToSend.append('careerId', formData.careerId);
+      
+      if (formData.cvFile) {
+        formDataToSend.append('cvFile', formData.cvFile);
+      }
+
       const response = await fetch('/api/apply', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       const result = await response.json();
@@ -100,16 +122,12 @@ export default function Apply() {
         });
         // Reset form
         setFormData({
-          name: "",
+          fullName: "",
           email: "",
+          age: "",
           phoneNumber: "",
-          businessName: "",
-          brandDescription: "",
-          instagram: "",
-          facebook: "",
-          tiktok: "",
-          extraNotes: "",
-          position: career ? career.title : "",
+          portfolio: "",
+          cvFile: null,
           careerId: career ? career._id : ""
         });
       } else {
@@ -203,7 +221,7 @@ export default function Apply() {
           )}
 
           <div className="space-y-6">
-            {/* Required Fields */}
+            {/* Left Column */}
             <motion.div 
               className="grid grid-cols-1 sm:grid-cols-2 gap-6"
               initial={{ opacity: 0, y: 20 }}
@@ -211,39 +229,21 @@ export default function Apply() {
               transition={{ duration: 0.6, delay: 0.6 }}
             >
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Name*
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name*
                 </label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
                   onChange={handleInputChange}
                   placeholder="Your full name"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
                   required
                 />
               </div>
 
-              <div>
-                <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Business Name*
-                </label>
-                <input
-                  type="text"
-                  id="businessName"
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleInputChange}
-                  placeholder="Your business name"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
-                  required
-                />
-              </div>
-            </motion.div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email*
@@ -255,7 +255,33 @@ export default function Apply() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="your.email@example.com"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
+                  required
+                />
+              </div>
+            </motion.div>
+
+            {/* Right Column */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <div>
+                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
+                  Age*
+                </label>
+                <input
+                  type="number"
+                  id="age"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  placeholder="Your age"
+                  min="18"
+                  max="65"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
                   required
                 />
               </div>
@@ -271,129 +297,74 @@ export default function Apply() {
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
                   placeholder="+1 (555) 123-4567"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
                   required
                 />
               </div>
-            </div>
+            </motion.div>
 
-            {/* Position Field - Only show if not career-specific */}
-            {!career && (
-              <div>
-                <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">
-                  Position You're Applying For*
-                </label>
-                <input
-                  type="text"
-                  id="position"
-                  name="position"
-                  value={formData.position}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Digital Marketing Specialist"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
-                  required
-                />
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="brandDescription" className="block text-sm font-medium text-gray-700 mb-2">
-                Your Brand in One Line*
-              </label>
-              <input
-                type="text"
-                id="brandDescription"
-                name="brandDescription"
-                value={formData.brandDescription}
-                onChange={handleInputChange}
-                placeholder="What makes you impossible to ignore?"
-                className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
-                required
-              />
-            </div>
-
-            {/* Social Media Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-2">
-                  Business Instagram
-                </label>
-                <input
-                  type="url"
-                  id="instagram"
-                  name="instagram"
-                  value={formData.instagram}
-                  onChange={handleInputChange}
-                  placeholder="@yourbusiness"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="facebook" className="block text-sm font-medium text-gray-700 mb-2">
-                  Business Facebook
-                </label>
-                <input
-                  type="url"
-                  id="facebook"
-                  name="facebook"
-                  value={formData.facebook}
-                  onChange={handleInputChange}
-                  placeholder="facebook.com/yourbusiness"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="tiktok" className="block text-sm font-medium text-gray-700 mb-2">
-                  Business TikTok
-                </label>
-                <input
-                  type="url"
-                  id="tiktok"
-                  name="tiktok"
-                  value={formData.tiktok}
-                  onChange={handleInputChange}
-                  placeholder="@yourbusiness"
-                  className="w-full px-4 py-3 rounded-full border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="extraNotes" className="block text-sm font-medium text-gray-700 mb-2">
-                Extra Notes
-              </label>
-              <textarea
-                id="extraNotes"
-                name="extraNotes"
-                value={formData.extraNotes}
-                onChange={handleInputChange}
-                rows={4}
-                placeholder="Anything we should know to make the noise louder?"
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors resize-none"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <motion.div 
-              className="flex justify-center sm:justify-end"
+            {/* CV Upload */}
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1.0 }}
             >
+              <label htmlFor="cvFile" className="block text-sm font-medium text-gray-700 mb-2">
+                Upload your CV*
+              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  id="cvFile"
+                  name="cvFile"
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#F58906] file:text-white hover:file:bg-orange-500"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Attach a file &lt;2MB</p>
+              </div>
+            </motion.div>
+
+            {/* Portfolio Link */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.2 }}
+            >
+              <label htmlFor="portfolio" className="block text-sm font-medium text-gray-700 mb-2">
+                Your Portfolio (Behance / Drive link)
+              </label>
+              <input
+                type="url"
+                id="portfolio"
+                name="portfolio"
+                value={formData.portfolio}
+                onChange={handleInputChange}
+                placeholder="https://behance.net/yourportfolio or Google Drive link"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F58906] focus:border-transparent transition-colors"
+              />
+            </motion.div>
+
+            {/* Submit Button */}
+            <motion.div 
+              className="flex justify-end"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.4 }}
+            >
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-6 sm:px-8 py-3 rounded-full font-semibold transition-colors ${
+                className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
                   isSubmitting 
                     ? 'bg-gray-400 cursor-not-allowed' 
                     : 'bg-[#F58906] hover:bg-orange-500'
-                } text-white w-full sm:w-auto`}
+                } text-white`}
                 whileHover={!isSubmitting ? { scale: 1.05 } : {}}
                 whileTap={!isSubmitting ? { scale: 0.95 } : {}}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </motion.button>
             </motion.div>
           </div>

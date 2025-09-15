@@ -1,9 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 export default function Values() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const values = [
     {
       code: "Lc",
@@ -50,16 +54,33 @@ export default function Values() {
   ];
 
   return (
-    <section id="values" className="relative bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="values" className="relative bg-white py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Heading */}
-        <div className="mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold text-purple-900 mb-4">Our Values</h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl">
+        <motion.div 
+          className="mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <motion.h2 
+            className="text-4xl sm:text-5xl font-bold text-purple-900 mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            Our Values
+          </motion.h2>
+          <motion.p 
+            className="text-lg sm:text-xl text-gray-600 max-w-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
             Every great experiment needs the right chemistry. These are the rules we live (and work) by:
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
          {/* Grid */}
          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
@@ -69,8 +90,8 @@ export default function Values() {
                className="relative rounded-lg border border-gray-200 overflow-hidden"
                style={{ minHeight: '160px' }}
                initial={{ opacity: 0, y: 30 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: index * 0.1 }}
+               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+               transition={{ duration: 0.6, delay: 0.8 + (index * 0.1) }}
                whileHover={{ scale: 1.05, y: -5 }}
                whileTap={{ scale: 0.95 }}
              >
@@ -78,8 +99,8 @@ export default function Values() {
                <motion.div 
                  className="absolute top-4 xs:top-6 left-4 xs:left-6 w-[48px] xs:w-[56px] h-[55px] xs:h-[65px] border border-black bg-transparent z-10 flex items-end justify-center text-lg xs:text-xl sm:text-2xl font-bold text-black leading-none pb-1 xs:pb-2"
                  initial={{ opacity: 0, scale: 0.5 }}
-                 animate={{ opacity: 1, scale: 1 }}
-                 transition={{ duration: 0.4, delay: (index * 0.1) + 0.3 }}
+                 animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+                 transition={{ duration: 0.4, delay: 1.0 + (index * 0.1) }}
                  whileHover={{ scale: 1.1 }}
                >
                  {value.code}
@@ -88,8 +109,8 @@ export default function Values() {
                <motion.span 
                  className="absolute top-2 xs:top-4 right-2 text-[8px] xs:text-[10px] font-semibold text-gray-600"
                  initial={{ opacity: 0 }}
-                 animate={{ opacity: 1 }}
-                 transition={{ duration: 0.3, delay: (index * 0.1) + 0.5 }}
+                 animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+                 transition={{ duration: 0.3, delay: 1.2 + (index * 0.1) }}
                >
                  {value.number}
                </motion.span>
@@ -102,8 +123,8 @@ export default function Values() {
                  <motion.h3 
                    className="text-sm xs:text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1"
                    initial={{ opacity: 0, x: -20 }}
-                   animate={{ opacity: 1, x: 0 }}
-                   transition={{ duration: 0.4, delay: (index * 0.1) + 0.4 }}
+                   animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                   transition={{ duration: 0.4, delay: 1.4 + (index * 0.1) }}
                  >
                    {value.title}
                  </motion.h3>
@@ -112,15 +133,15 @@ export default function Values() {
                  <motion.div 
                    className="w-full border-t-2 border-black mb-2"
                    initial={{ scaleX: 0 }}
-                   animate={{ scaleX: 1 }}
-                   transition={{ duration: 0.5, delay: (index * 0.1) + 0.6 }}
+                   animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+                   transition={{ duration: 0.5, delay: 1.6 + (index * 0.1) }}
                  />
 
                  <motion.p 
                    className="text-xs xs:text-sm text-gray-800 leading-relaxed"
                    initial={{ opacity: 0, y: 10 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.4, delay: (index * 0.1) + 0.7 }}
+                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                   transition={{ duration: 0.4, delay: 1.8 + (index * 0.1) }}
                  >
                    {value.description}
                  </motion.p>

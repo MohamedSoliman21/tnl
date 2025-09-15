@@ -115,22 +115,23 @@ export function createContactEmailTemplate(data: ContactFormData): EmailData {
 }
 
 interface JobApplicationData {
-  name: string;
+  fullName: string;
   email: string;
+  age: number;
   phoneNumber: string;
-  businessName: string;
-  brandDescription: string;
-  instagram?: string;
-  facebook?: string;
-  tiktok?: string;
-  extraNotes?: string;
+  portfolio?: string;
+  careerId: string;
+  cvFileName: string;
+  cvFileSize: number;
+  cvFileType: string;
+  cvFileBase64: string; // Add base64 field
   ipAddress?: string;
 }
 
 export function createJobApplicationEmailTemplate(data: JobApplicationData): EmailData {
   return {
     to: 'thenoisylabbb@gmail.com',
-    subject: `New Job Application from ${data.name}`,
+    subject: `New Job Application from ${data.fullName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #F58906; border-bottom: 2px solid #F58906; padding-bottom: 10px;">
@@ -139,28 +140,16 @@ export function createJobApplicationEmailTemplate(data: JobApplicationData): Ema
         
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #333; margin-top: 0;">Applicant Information</h3>
-          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Full Name:</strong> ${data.fullName}</p>
           <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
+          <p><strong>Age:</strong> ${data.age}</p>
           <p><strong>Phone:</strong> <a href="tel:${data.phoneNumber}">${data.phoneNumber}</a></p>
-          <p><strong>Business Name:</strong> ${data.businessName}</p>
-          <p><strong>Brand Description:</strong> ${data.brandDescription}</p>
+          <p><strong>Portfolio:</strong> ${data.portfolio ? `<a href="${data.portfolio}" target="_blank">${data.portfolio}</a>` : 'Not provided'}</p>
+          <p><strong>CV File:</strong> ${data.cvFileName} (${(data.cvFileSize / 1024).toFixed(1)} KB)</p>
+          <p><strong>File Type:</strong> ${data.cvFileType}</p>
+          <p><strong>Download CV:</strong> <a href="data:${data.cvFileType};base64,${data.cvFileBase64}" download="${data.cvFileName}" style="color: #F58906; text-decoration: none;">Click here to download CV</a></p>
+          <p><strong>Career ID:</strong> ${data.careerId}</p>
         </div>
-        
-        ${data.instagram || data.facebook || data.tiktok ? `
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #333; margin-top: 0;">Social Media</h3>
-          ${data.instagram ? `<p><strong>Instagram:</strong> <a href="${data.instagram}" target="_blank">${data.instagram}</a></p>` : ''}
-          ${data.facebook ? `<p><strong>Facebook:</strong> <a href="${data.facebook}" target="_blank">${data.facebook}</a></p>` : ''}
-          ${data.tiktok ? `<p><strong>TikTok:</strong> <a href="${data.tiktok}" target="_blank">${data.tiktok}</a></p>` : ''}
-        </div>
-        ` : ''}
-        
-        ${data.extraNotes ? `
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #333; margin-top: 0;">Additional Notes</h3>
-          <p>${data.extraNotes}</p>
-        </div>
-        ` : ''}
         
         <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
         <p style="color: #666; font-size: 14px;">
@@ -173,16 +162,16 @@ export function createJobApplicationEmailTemplate(data: JobApplicationData): Ema
       New Job Application
       
       Applicant Information:
-      Name: ${data.name}
+      Full Name: ${data.fullName}
       Email: ${data.email}
+      Age: ${data.age}
       Phone: ${data.phoneNumber}
-      Business Name: ${data.businessName}
-      Brand Description: ${data.brandDescription}
+      Portfolio: ${data.portfolio || 'Not provided'}
+      CV File: ${data.cvFileName} (${(data.cvFileSize / 1024).toFixed(1)} KB)
+      File Type: ${data.cvFileType}
+      Career ID: ${data.careerId}
       
-      ${data.instagram ? `Instagram: ${data.instagram}` : ''}
-      ${data.facebook ? `Facebook: ${data.facebook}` : ''}
-      ${data.tiktok ? `TikTok: ${data.tiktok}` : ''}
-      ${data.extraNotes ? `Extra Notes: ${data.extraNotes}` : ''}
+      Note: CV file is attached as base64 data in the HTML version of this email.
       
       Application submitted on: ${new Date().toLocaleString()}
       IP Address: ${data.ipAddress || 'Not available'}
